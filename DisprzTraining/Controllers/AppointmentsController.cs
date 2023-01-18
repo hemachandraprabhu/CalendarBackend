@@ -49,10 +49,17 @@ namespace DisprzTraining.Controllers
         {
             if ((postItemDto.startDate >= postItemDto.endDate) || (postItemDto.startDate < DateTime.Now))
             {
-                return BadRequest("Invalid Time");
+                if (postItemDto.startDate >= postItemDto.endDate)
+                {
+                    return BadRequest("Invalid Time");
+                }
+                if (postItemDto.startDate < DateTime.Now)
+                {
+                    return BadRequest("cannot create event for past");
+                }
             }
             var res = (await _appointmentBL.AddAppointmentAsync(postItemDto));
-            return res != null ? CreatedAtAction(nameof(GetAppointmentsByDateAsync), new { id = res.id }, res) : Conflict();
+            return res != null ? CreatedAtAction(nameof(GetAppointmentsByDateAsync), new { id = res.id }, res) : Conflict("event already exist");
         }
 
         [HttpPut("appointments")]
@@ -63,12 +70,19 @@ namespace DisprzTraining.Controllers
         {
             if (putItemDto.startDate >= putItemDto.endDate || (putItemDto.startDate < DateTime.Now))
             {
-                return BadRequest("Invalid time");
+                if (putItemDto.startDate >= putItemDto.endDate)
+                {
+                    return BadRequest("Invalid Time");
+                }
+                if (putItemDto.startDate < DateTime.Now)
+                {
+                    return BadRequest("cannot update event for past");
+                }
             }
 
             var res = await _appointmentBL.UpdateAppointmentAsync(putItemDto);
 
-            return res ? Ok() : Conflict();
+            return res ? Ok("event was successfully updated") : Conflict("an event already exist in the choosen time");
         }
 
         [HttpDelete("appointments/{id}")]
@@ -81,7 +95,7 @@ namespace DisprzTraining.Controllers
             return res ? NoContent() : NotFound();
         }
 
-       
+
 
         //design - GET /api/appointments
         //- POST /api/appointments

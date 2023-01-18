@@ -6,9 +6,14 @@ namespace DisprzTraining.DataAccess
     public class AppointmentDAL : IAppointmentDAL
     {
         public static List<Appointment> allAppointments = new(){
-            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,2,1,6,10,0), endDate = new DateTime(2023,2,1,6,30,0), appointment = "TownHall"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,1,6,10,0), endDate = new DateTime(2023,1,1,6,30,0), appointment = "TownHall"},
             new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,2,2, 9, 30, 0), endDate = new DateTime(2023,2,2,10,15,0), appointment = "LeaderShip"},
             new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,2,3, 11, 0, 0), endDate = new DateTime(2023,2,3,11,30,0), appointment = "standup"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,6,10,0), endDate = new DateTime(2023,1,14,6,30,0), appointment = "TownHall"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,8,10,0), endDate = new DateTime(2023,1,14,8,30,0), appointment = "TownHall"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,11,10,0), endDate = new DateTime(2023,1,14,11,30,0), appointment = "TownHall"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,18,10,0), endDate = new DateTime(2023,1,14,19,30,0), appointment = "TownHall"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,20,10,0), endDate = new DateTime(2023,1,14,21,30,0), appointment = "TownHall"},
 
         };
 
