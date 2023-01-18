@@ -117,7 +117,7 @@ namespace DisprzTraining.Tests.Systems.Controller
             var res = await sut.AddAppointmentAsync(AppointmentToAdd);
 
             /* Assert */
-            res.Should().BeOfType<ConflictResult>();
+            res.Should().BeOfType<ConflictObjectResult>();
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace DisprzTraining.Tests.Systems.Controller
             var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
 
             /* Assert */
-            res.Should().BeOfType<ConflictResult>();
+            res.Should().BeOfType<ConflictObjectResult>();
         }
 
         [Fact]
@@ -215,7 +215,7 @@ namespace DisprzTraining.Tests.Systems.Controller
             var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
 
             /* Assert */
-            res.Should().BeOfType<OkResult>();
+            res.Should().BeOfType<OkObjectResult>();
         }
     }
 }

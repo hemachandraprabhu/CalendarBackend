@@ -10950,11 +10950,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\DisprzTraining\\DisprzTraining.Tests\\DisprzTraining.Tests.csproj",
+      "projectUniqueName": "d:\\DisprzTraining\\DisprzTraining.Tests\\DisprzTraining.Tests.csproj",
       "projectName": "DisprzTraining.Tests",
-      "projectPath": "D:\\DisprzTraining\\DisprzTraining.Tests\\DisprzTraining.Tests.csproj",
+      "projectPath": "d:\\DisprzTraining\\DisprzTraining.Tests\\DisprzTraining.Tests.csproj",
       "packagesPath": "C:\\Users\\hemachandraprabhu.r_\\.nuget\\packages\\",
-      "outputPath": "D:\\DisprzTraining\\DisprzTraining.Tests\\obj\\",
+      "outputPath": "d:\\DisprzTraining\\DisprzTraining.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\hemachandraprabhu.r_\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -10969,8 +10969,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "D:\\DisprzTraining\\DisprzTraining\\DisprzTraining.csproj": {
-              "projectPath": "D:\\DisprzTraining\\DisprzTraining\\DisprzTraining.csproj"
+            "d:\\DisprzTraining\\DisprzTraining\\DisprzTraining.csproj": {
+              "projectPath": "d:\\DisprzTraining\\DisprzTraining\\DisprzTraining.csproj"
             }
           }
         }
