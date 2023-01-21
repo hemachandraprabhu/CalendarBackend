@@ -59,7 +59,7 @@ namespace DisprzTraining.Controllers
                 }
             }
             var res = (await _appointmentBL.AddAppointmentAsync(postItemDto));
-            return res != null ? CreatedAtAction(nameof(GetAppointmentsByDateAsync), new { id = res.id }, res) : Conflict("event already exist");
+            return res != null ? CreatedAtAction(nameof(GetAppointmentsByDateAsync), new { id = res.id }, res) : Conflict("an event already exist in the choosen time");
         }
 
         [HttpPut("appointments")]

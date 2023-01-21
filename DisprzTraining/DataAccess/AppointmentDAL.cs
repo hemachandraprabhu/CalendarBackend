@@ -14,10 +14,9 @@ namespace DisprzTraining.DataAccess
             new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,11,10,0), endDate = new DateTime(2023,1,14,11,30,0), appointment = "TownHall"},
             new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,18,10,0), endDate = new DateTime(2023,1,14,19,30,0), appointment = "TownHall"},
             new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,14,20,10,0), endDate = new DateTime(2023,1,14,21,30,0), appointment = "TownHall"},
-
         };
 
-
+        
         public async Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date)
         {
             var item = allAppointments.Where(x => x.startDate.Day == date.Day && x.startDate.Month == date.Month && x.startDate.Year == date.Year).ToList();

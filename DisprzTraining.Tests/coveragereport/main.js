@@ -222,8 +222,8 @@ var assemblies = [
     "name": "DisprzTraining",
     "classes": [
       { "name": "DisprzTraining.Business.AppointmentBL", "rp": "DisprzTraining_AppointmentBL.html", "cl": 46, "ucl": 0, "cal": 46, "tl": 79, "ct": "LineCoverage", "cbm": "-", "cb": 10, "tb": 10, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "DisprzTraining.Controllers.AppointmentsController", "rp": "DisprzTraining_AppointmentsController.html", "cl": 34, "ucl": 0, "cal": 34, "tl": 101, "ct": "LineCoverage", "cbm": "-", "cb": 18, "tb": 18, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "DisprzTraining.DataAccess.AppointmentDAL", "rp": "DisprzTraining_AppointmentDAL.html", "cl": 48, "ucl": 0, "cal": 48, "tl": 75, "ct": "LineCoverage", "cbm": "-", "cb": 27, "tb": 34, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "DisprzTraining.Controllers.AppointmentsController", "rp": "DisprzTraining_AppointmentsController.html", "cl": 38, "ucl": 8, "cal": 46, "tl": 115, "ct": "LineCoverage", "cbm": "-", "cb": 20, "tb": 26, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "DisprzTraining.DataAccess.AppointmentDAL", "rp": "DisprzTraining_AppointmentDAL.html", "cl": 53, "ucl": 0, "cal": 53, "tl": 80, "ct": "LineCoverage", "cbm": "-", "cb": 30, "tb": 34, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "DisprzTraining.Dtos.ItemDto", "rp": "DisprzTraining_ItemDto.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 5, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "DisprzTraining.Dtos.PostItemDto", "rp": "DisprzTraining_PostItemDto.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 5, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "DisprzTraining.Extensions", "rp": "DisprzTraining_Extensions.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 13, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
