@@ -1,8 +1,6 @@
 ﻿using DisprzTraining.Business;
 using DisprzTraining.DataAccess;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+
 
 namespace DisprzTraining.Utils
 {
@@ -12,8 +10,8 @@ namespace DisprzTraining.Utils
         {
             services.AddHttpContextAccessor();
 
-            services.AddScoped<IHelloWorldBL, HelloWorldBL>();
-            services.AddScoped<IHelloWorldDAL, HelloWorldDAL>();
+            services.AddScoped<IAppointmentBL, AppointmentBL>();
+            services.AddScoped<IAppointmentDAL, AppointmentDAL>();
         }
     }
 }
