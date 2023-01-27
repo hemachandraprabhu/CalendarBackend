@@ -13,7 +13,7 @@ namespace DisprzTraining.Tests.Systems.Buisness
         private readonly Mock<IAppointmentDAL> mockAppointmentDAL = new();
         private Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate = new DateTime(2022, 12, 21, 9, 0, 0), endDate = new DateTime(2022, 12, 21, 10, 0, 0), appointment = "BLTest" };
         private PostItemDto postItemDto = new PostItemDto(new DateTime(2022, 12, 21, 9, 0, 0), new DateTime(2022, 12, 21, 10, 0, 0), "TownHall");
-
+        private List<Appointment> emptyList = new();
 
         [Fact]
         public async Task GetAppointmentByDateAsync_withValidDate_ReturnListOfAppointment()
@@ -27,6 +27,7 @@ namespace DisprzTraining.Tests.Systems.Buisness
             var res = await sut.GetAppointmentsByDateAsync(d);
 
             // Then
+            res.Should().NotBeEmpty();
             res.Should().BeOfType<List<Appointment>>();
         }
 
@@ -35,16 +36,19 @@ namespace DisprzTraining.Tests.Systems.Buisness
         {
             // Given
             DateTime d = new DateTime();
-            mockAppointmentDAL.Setup(service => service.GetAppointmentsByDateAsync(d)).ReturnsAsync(() => null);
+
+            mockAppointmentDAL.Setup(service => service.GetAppointmentsByDateAsync(d)).ReturnsAsync(emptyList);
             var sut = new AppointmentBL(mockAppointmentDAL.Object);
 
             // When
             var res = await sut.GetAppointmentsByDateAsync(d);
 
             // Then
-            res.Should().BeNull();
+            res.Should().BeEmpty();
+            res.Count.Should().Be(0);
+            res.Should().BeOfType<List<Appointment>>();
         }
-        
+
         [Fact]
         public async Task GetAppointmentByMonthAsync_withValidMonth_ReturnListOfAppointment()
         {
@@ -65,14 +69,16 @@ namespace DisprzTraining.Tests.Systems.Buisness
         {
             // Given
             DateTime d = new DateTime();
-            mockAppointmentDAL.Setup(service => service.GetAppointmentsByMonthAsync(d)).ReturnsAsync(() => null);
+            mockAppointmentDAL.Setup(service => service.GetAppointmentsByMonthAsync(d)).ReturnsAsync(emptyList);
             var sut = new AppointmentBL(mockAppointmentDAL.Object);
 
             // When
             var res = await sut.GetAppointmentsByMonthAsync(d);
 
             // Then
-            res.Should().BeNull();
+            res.Should().BeEmpty();
+            res.Count.Should().Be(0);
+            res.Should().BeOfType<List<Appointment>>();
         }
 
         [Fact]

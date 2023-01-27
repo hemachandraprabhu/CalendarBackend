@@ -17,30 +17,35 @@ namespace DisprzTraining.Tests.Systems.Controller
         public async Task GetAppointmentByDateAsync_withValidDate_ReturnsOkResult()
         {
             // Given
-            DateTime d = new DateTime();
+            DateTime date = new DateTime();
             mockAppointmentBL.Setup(service => service.GetAppointmentsByDateAsync(It.IsAny<DateTime>())).ReturnsAsync(AppointmentsFixture.GetTestAppointments());
             var sut = new AppointmentsController(mockAppointmentBL.Object);
 
             // When
-            var res = await sut.GetAppointmentsByDateAsync(d);
+            var res = await sut.GetAppointmentsByDateAsync(date);
 
             // Then
             res.Should().BeOfType<OkObjectResult>();
+            var okObjectResult = res as OkObjectResult;
+            okObjectResult.Value.Should().NotBeNull();
+            okObjectResult.Value.Should().BeOfType<List<ItemDto>>();
         }
 
         [Fact]
         public async Task GetAppointmentByDateAsync_withInValidDate_ReturnsNotFound()
         {
             // Given
-            DateTime d = new DateTime();
-            mockAppointmentBL.Setup(service => service.GetAppointmentsByDateAsync(d)).ReturnsAsync(new List<Appointment>());
+            DateTime date = new DateTime();
+            mockAppointmentBL.Setup(service => service.GetAppointmentsByDateAsync(It.IsAny<DateTime>())).ReturnsAsync(new List<Appointment>());
             var sut = new AppointmentsController(mockAppointmentBL.Object);
 
             // When
-            var res = await sut.GetAppointmentsByDateAsync(d);
+            var res = await sut.GetAppointmentsByDateAsync(date);
 
             // Then
             res.Should().BeOfType<NotFoundObjectResult>();
+            var notFoundObjectResult = res as NotFoundObjectResult;
+            notFoundObjectResult.Value.Should().BeOfType<List<ItemDto>>();
         }
 
         [Fact]
@@ -56,6 +61,9 @@ namespace DisprzTraining.Tests.Systems.Controller
 
             // Then
             res.Should().BeOfType<OkObjectResult>();
+            var okObjectResult = res as OkObjectResult;
+            okObjectResult.Value.Should().NotBeNull();
+            okObjectResult.Value.Should().BeOfType<List<ItemDto>>();
         }
 
         [Fact]
@@ -71,24 +79,48 @@ namespace DisprzTraining.Tests.Systems.Controller
 
             // Then
             res.Should().BeOfType<NotFoundObjectResult>();
+            var okObjectResult = res as NotFoundObjectResult;
+            okObjectResult.Value.Should().BeOfType<List<ItemDto>>();
         }
 
         [Fact]
-        public async Task AddAppointmentAsync_withAppointmentToAdd_ReturnsAddedAppointment()
+        public async Task AddAppointmentAsync_whenStartTimeIsGreaterThanEndTime_ReturnsBadRequest()
         {
             /* Arrange */
-            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2024, 12, 22, 8, 0, 0), new DateTime(2024, 12, 22, 12, 0, 0), "Test");
-            Appointment appointment = new()
-            {
-                id = Guid.NewGuid(),
-                startDate = AppointmentToAdd.startDate,
-                endDate = AppointmentToAdd.endDate,
-                appointment = AppointmentToAdd.appointment
-            };
-            ItemDto appointmentDto = appointment.AsDto();
+            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2023, 1, 28, 8, 0, 0), new DateTime(2023, 1, 28, 7, 0, 0), "test");
+
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.AddAppointmentAsync(AppointmentToAdd);
+
+            /* Assert */
+            res.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public async Task AddAppointmentAsync_whenStartTimeIsLessThanCurrentTime_ReturnsBadRequest()
+        {
+            /* Arrange */
+            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2023, 1, 1, 8, 0, 0), new DateTime(2023, 1, 1, 9, 0, 0), "test");
+
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.AddAppointmentAsync(AppointmentToAdd);
+
+            /* Assert */
+            res.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public async Task AddAppointmentAsync_withValidAppointmentToAdd_ReturnsAddedAppointment()
+        {
+            /* Arrange */
+            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2024, 1, 1, 8, 0, 0), new DateTime(2024, 1, 1, 9, 0, 0), "Test");
+            ItemDto appointmentDto = new ItemDto(Guid.NewGuid(), AppointmentToAdd.startDate, AppointmentToAdd.endDate, AppointmentToAdd.appointment);
 
             mockAppointmentBL.Setup(service => service.AddAppointmentAsync(It.IsAny<PostItemDto>())).Returns(Task.FromResult<ItemDto>(appointmentDto));
-
             var sut = new AppointmentsController(mockAppointmentBL.Object);
 
             /* Act */
@@ -103,11 +135,12 @@ namespace DisprzTraining.Tests.Systems.Controller
             );
         }
 
+
         [Fact]
-        public async Task AddAppointmentAsync_withDuplicateAppointmentToAdd_ReturnsConflict()
+        public async Task AddAppointmentAsync_withConflictAppointmentToAdd_ReturnsConflict()
         {
             /* Arrange */
-            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2024, 12, 22, 2, 0, 0), new DateTime(2024, 12, 22, 3, 0, 0), "test");
+            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2023, 1, 28, 9, 0, 0), new DateTime(2024, 1, 28, 11, 0, 0), "test");
 
             mockAppointmentBL.Setup(service => service.AddAppointmentAsync(AppointmentToAdd)).Returns(Task.FromResult<ItemDto>(null));
 
@@ -117,23 +150,74 @@ namespace DisprzTraining.Tests.Systems.Controller
             var res = await sut.AddAppointmentAsync(AppointmentToAdd);
 
             /* Assert */
-            res.Should().BeOfType<ConflictObjectResult>();
+            res.Should().BeOfType<ConflictResult>();
         }
 
         [Fact]
-        public async Task AddAppointmentAsync_withEqualTimeToAdd_ReturnsBadRequest()
+        public async Task UpdateAppointmentAsync_whenStartTimeIsGreaterThanEndTime_ReturnsBadRequest()
         {
             /* Arrange */
-            PostItemDto AppointmentToAdd = new PostItemDto(new DateTime(2022, 12, 22, 8, 0, 0), new DateTime(2022, 12, 22, 8, 0, 0), "test");
+            ItemDto AppointmentToAdd = new ItemDto(Guid.NewGuid(), new DateTime(2023, 1, 28, 8, 0, 0), new DateTime(2023, 1, 28, 7, 0, 0), "test");
 
             var sut = new AppointmentsController(mockAppointmentBL.Object);
 
             /* Act */
-            var res = await sut.AddAppointmentAsync(AppointmentToAdd);
+            var res = await sut.UpdateAppointmentAsync(AppointmentToAdd);
 
             /* Assert */
             res.Should().BeOfType<BadRequestObjectResult>();
         }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_whenStartTimeIsLessThanCurrentTime_ReturnsBadRequest()
+        {
+            /* Arrange */
+            ItemDto AppointmentToAdd = new ItemDto(Guid.NewGuid(), new DateTime(2023, 1, 1, 8, 0, 0), new DateTime(2023, 1, 1, 9, 0, 0), "test");
+
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.UpdateAppointmentAsync(AppointmentToAdd);
+
+            /* Assert */
+            res.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withValidAppointment_ReturnOk()
+        {
+            /* Arrange */
+            ItemDto AppointmentToUpdate = new ItemDto(Guid.NewGuid(), new DateTime(2024, 1, 1, 8, 0, 0), new DateTime(2024, 1, 1, 9, 0, 0), "test");
+
+            mockAppointmentBL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>()))
+               .ReturnsAsync(true);
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
+
+            /* Assert */
+            res.Should().BeOfType<OkResult>();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withConflictTime_ReturnConflict()
+        {
+            /* Arrange */
+            ItemDto AppointmentToUpdate = new ItemDto(Guid.NewGuid(), new DateTime(2023, 1, 28, 9, 0, 0), new DateTime(2024, 1, 28, 11, 0, 0), "test");
+
+            mockAppointmentBL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>()))
+               .ReturnsAsync(false);
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
+
+            /* Assert */
+            res.Should().BeOfType<ConflictResult>();
+        }
+
+
 
         [Fact]
         public async Task DeleteAppointmentAsync_WithExistingItem_ReturnsNoContent()
@@ -167,55 +251,5 @@ namespace DisprzTraining.Tests.Systems.Controller
             res.Should().BeOfType<NotFoundResult>();
         }
 
-        [Fact]
-        public async Task UpdateAppointmentAsync_withInvalidTime_ReturnBadRequest()
-        {
-            /* Arrange */
-            var itemId = Guid.NewGuid();
-            ItemDto AppointmentToUpdate = new ItemDto(itemId, new DateTime(2022, 12, 22, 8, 0, 0), new DateTime(2022, 12, 22, 8, 0, 0), "test");
-
-            var sut = new AppointmentsController(mockAppointmentBL.Object);
-            /* Act */
-            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
-
-            /* Assert */
-            res.Should().BeOfType<BadRequestObjectResult>();
-        }
-
-        [Fact]
-        public async Task UpdateAppointmentAsync_withConflictTime_ReturnConflict()
-        {
-            /* Arrange */
-            var itemId = Guid.NewGuid();
-            ItemDto AppointmentToUpdate = new ItemDto(itemId, new DateTime(2024, 12, 22, 8, 0, 0), new DateTime(2024, 12, 22, 9, 0, 0), "test");
-
-            mockAppointmentBL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>()))
-               .ReturnsAsync(false);
-            var sut = new AppointmentsController(mockAppointmentBL.Object);
-
-            /* Act */
-            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
-
-            /* Assert */
-            res.Should().BeOfType<ConflictObjectResult>();
-        }
-
-        [Fact]
-        public async Task UpdateAppointmentAsync_withValidAppointment_ReturnOk()
-        {
-            /* Arrange */
-            var itemId = Guid.NewGuid();
-            ItemDto AppointmentToUpdate = new ItemDto(itemId, new DateTime(2024, 12, 22, 8, 0, 0), new DateTime(2024, 12, 22, 9, 0, 0), "test");
-
-            mockAppointmentBL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>()))
-               .ReturnsAsync(true);
-            var sut = new AppointmentsController(mockAppointmentBL.Object);
-
-            /* Act */
-            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
-
-            /* Assert */
-            res.Should().BeOfType<OkObjectResult>();
-        }
     }
 }

@@ -5,95 +5,192 @@ using FluentAssertions;
 
 namespace DisprzTraining.Tests.Systems.DataAccess
 {
+
     public class AppointmentDALTest
     {
+
         [Fact]
         public async Task GetppointmentByDateAsync_withValidDate_ReturnsListOfAppointment()
         {
             //Arrange
-            DateTime d = new DateTime(2022, 12, 21);
+            DateTime date = new DateTime(2023, 1, 27);
             var sut = new AppointmentDAL();
 
             //Act
-            var res = await sut.GetAppointmentsByDateAsync(d);
+            var res = await sut.GetAppointmentsByDateAsync(date);
 
             //Assert
-            // res.Should().BeOfType<List<Appointment>>();
-            Assert.IsType<List<Appointment>>(res);
+            res.Should().NotBeEmpty();
+            res.Should().BeOfType<List<Appointment>>();
+            res.Count.Should().Be(1);
         }
 
         [Fact]
-        public async Task GetppointmentByDateAsync_withInValidDate_ReturnsNull()
+        public async Task GetppointmentByDateAsync_withInValidDate_ReturnsEmptyListOfAppointment()
         {
             //Arrange
-            DateTime d = new DateTime();
+            DateTime date = new DateTime(2020, 1, 1);
             var sut = new AppointmentDAL();
 
             //Act
-            var res = await sut.GetAppointmentsByDateAsync(d);
+            var res = await sut.GetAppointmentsByDateAsync(date);
 
             //Assert
-            // res.Should().BeEmpty();
-            Assert.Empty(res);
+            res.Should().BeEmpty();
+            res.Should().BeOfType<List<Appointment>>();
+            res.Count.Should().Be(0);
         }
 
-         [Fact]
+        [Fact]
         public async Task GetppointmentByMonthAsync_withValidMonth_ReturnsListOfAppointment()
         {
             //Arrange
-            DateTime d = new DateTime(2022, 12, 21);
+            DateTime date = new DateTime(2023, 1, 27);
             var sut = new AppointmentDAL();
 
             //Act
-            var res = await sut.GetAppointmentsByMonthAsync(d);
+            var res = await sut.GetAppointmentsByMonthAsync(date);
 
             //Assert
-            // res.Should().BeOfType<List<Appointment>>();
-            Assert.IsType<List<Appointment>>(res);
+            res.Should().NotBeEmpty();
+            res.Should().BeOfType<List<Appointment>>();
+            res.Count.Should().Be(3);
         }
 
         [Fact]
-        public async Task GetppointmentByMonthAsync_withInValidMonth_ReturnsNull()
+        public async Task GetppointmentByMonthAsync_withInValidMonth_ReturnsEmptyListOfAppointment()
         {
             //Arrange
-            DateTime d = new DateTime();
+            DateTime date = new DateTime(2020, 1, 1);
             var sut = new AppointmentDAL();
 
             //Act
-            var res = await sut.GetAppointmentsByMonthAsync(d);
+            var res = await sut.GetAppointmentsByMonthAsync(date);
 
             //Assert
-            // res.Should().BeEmpty();
-            Assert.Empty(res);
+            res.Should().BeEmpty();
+            res.Should().BeOfType<List<Appointment>>();
+            res.Count.Should().Be(0);
         }
 
         [Fact]
-        public async Task AddAppointmentAsync_withExistingAppointmentToAdd_ReturnsFalse()
+        public async Task AddAppointmentAsync_withoutConflict_ReturnsTrue()
         {
             //Arrange
-            var existingAppointment = AppointmentDAL.allAppointments[0];
-            var sut = new AppointmentDAL();
-
-            //Act
-            var res = await sut.AddAppointmentAsync(existingAppointment);
-
-            //Assert
-            Assert.Equal(false, res);
-        }
-
-        [Fact]
-        public async Task AddAppointmentAsync_withNewAppointmentToAdd_ReturnsTrue()
-        {
-            //Arrange
-            Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate = new DateTime(2023, 12, 21, 9, 0, 0), endDate = new DateTime(2023, 12, 21, 10, 0, 0), appointment = "BLTest" };
+            Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate = new DateTime(2023, 12, 30, 9, 0, 0), endDate = new DateTime(2023, 12, 30, 10, 0, 0), appointment = "DALTest" };
             var sut = new AppointmentDAL();
 
             //Act
             var res = await sut.AddAppointmentAsync(singleAppointment);
 
             //Assert
-            Assert.Equal(true, res);
+            res.Should().BeTrue();
+
         }
+
+        [Fact]
+        public async Task AddAppointmentAsync_withConflictInStartDate_ReturnsFalse()
+        {
+            //Arrange
+            Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate = new DateTime(2023, 1, 28, 9, 30, 0), endDate = new DateTime(2023, 1, 28, 11, 0, 0), appointment = "Town" };
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.AddAppointmentAsync(singleAppointment);
+
+            //Assert
+            res.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task AddAppointmentAsync_withConflictInEndDate_ReturnsFalse()
+        {
+            //Arrange
+            Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate = new DateTime(2023, 1, 28, 8, 0, 0), endDate =  new DateTime(2023, 1, 28, 9, 30, 0), appointment =  "Town" };
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.AddAppointmentAsync(singleAppointment);
+
+            //Assert
+            res.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task AddAppointmentAsync_withConflictInStartDateEndDate_ReturnsFalse()
+        {
+            //Arrange
+            Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate =  new DateTime(2023, 1, 28, 8, 0, 0), endDate =  new DateTime(2023, 1, 28, 10, 0, 0), appointment =  "Town" };
+
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.AddAppointmentAsync(singleAppointment);
+
+            //Assert
+            res.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withoutConflict_ReturnsTrue()
+        {
+            //Arrange
+            ItemDto check = new ItemDto(AppointmentDAL.allAppointments[0].id, new DateTime(2023, 1, 30, 2, 0, 0), new DateTime(2023, 1, 30, 3, 0, 0), "TownHall");
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Assert
+            res.Should().BeTrue();
+
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withConflictInStartDate_ReturnsFalse()
+        {
+            //Arrange
+            ItemDto check = new ItemDto(AppointmentDAL.allAppointments[0].id, new DateTime(2023, 1, 28, 9, 30, 0), new DateTime(2023, 1, 28, 11, 0, 0), "Town");
+
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Assert
+            res.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withConflictInEndDate_ReturnsFalse()
+        {
+            //Arrange
+            ItemDto check = new ItemDto(AppointmentDAL.allAppointments[0].id, new DateTime(2023, 1, 28, 8, 0, 0), new DateTime(2023, 1, 28, 9, 30, 0), "Town");
+
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Assert
+            res.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withConflictInStartDateEndDate_ReturnsFalse()
+        {
+            //Arrange
+            ItemDto check = new ItemDto(AppointmentDAL.allAppointments[1].id, new DateTime(2023, 1, 28, 8, 0, 0), new DateTime(2023, 1, 28, 10, 0, 0), "Town");
+
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Assert
+            res.Should().BeFalse();
+        }
+
 
         [Fact]
         public async Task DelteAppointmentAsync_withInvalidId_ReturnsFalse()
@@ -106,7 +203,7 @@ namespace DisprzTraining.Tests.Systems.DataAccess
             var res = await sut.DeleteAppointmentAsync(id);
 
             //Assert
-            Assert.Equal(false, res);
+            res.Should().BeFalse();
         }
 
         [Fact]
@@ -120,36 +217,10 @@ namespace DisprzTraining.Tests.Systems.DataAccess
             var res = await sut.DeleteAppointmentAsync(id);
 
             //Assert
-            Assert.Equal(true, res);
+            res.Should().BeTrue();
+
         }
 
-        [Fact]
-        public async Task UpdateAppointmentAsync_withoutConflict_ReturnsTrue()
-        {
-            //Arrange
-            ItemDto check = AppointmentDAL.allAppointments[0].AsDto();
-            var sut = new AppointmentDAL();
 
-            //Act
-            var res = await sut.UpdateAppointmentAsync(check);
-
-            //Assert
-            Assert.Equal(true, res);
-        }
-
-        [Fact]
-        public async Task UpdateAppointmentAsync_withConflict_ReturnsFalse()
-        {
-            //Arrange
-            ItemDto check = new ItemDto(AppointmentDAL.allAppointments[1].id, new DateTime(2023,1,1,6,10,0), new DateTime(2023,1,1,7,30,0), "Town");
-
-            var sut = new AppointmentDAL();
-
-            //Act
-            var res = await sut.UpdateAppointmentAsync(check);
-
-            //Assert
-            Assert.Equal(false, res);
-        }
     }
 }
